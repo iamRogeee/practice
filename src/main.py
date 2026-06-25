@@ -2,6 +2,7 @@ import sys
 import os
 
 from scanner import scan_folder, print_files_info
+from duplicates import find_duplicates, print_duplicates
 
 
 def print_usage():
@@ -52,9 +53,13 @@ def main():
     print(f"\n🔍 СКАНИРОВАНИЕ ПАПКИ: {folder_path}")
     print("=" * 80)
 
-    # Сканирование папки
+    # 1. Сканирование папки
     files_info, stats = scan_folder(folder_path)
     print_files_info(files_info, stats)
+
+    # 2. Поиск дубликатов
+    duplicates = find_duplicates(files_info)
+    print_duplicates(duplicates)
 
     print("\n" + "=" * 80)
     print("✅ Сканирование завершено")
