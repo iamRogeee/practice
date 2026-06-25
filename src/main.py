@@ -1,35 +1,64 @@
 import sys
 import os
-from pathlib import Path
+
+from scanner import scan_folder, print_files_info
 
 
 def print_usage():
     """Вывод справки по использованию"""
-    print("Использование: python main.py <путь_к_папке>")
-    print("Пример: python main.py /home/user/documents")
+    print("=" * 80)
+    print("🔍 КОНСОЛЬНЫЙ ИНДЕКСАТОР ПАПОК (упрощенная версия)")
+    print("=" * 80)
+    print("\nИспользование:")
+    print("  python main.py <путь_к_папке> [--backup <путь_к_бэкапу>]")
+    print("\nПримеры:")
+    print("  python main.py C:/Users/Егор/Documents")
+    print("  python main.py C:/Users/Егор/Documents --backup D:/Backup")
+    print("=" * 80)
+
+
+def parse_args():
+    """Разбор аргументов командной строки"""
+    folder_path = None
+    backup_path = None
+
+    for i, arg in enumerate(sys.argv[1:]):
+        if arg == '--backup' and i + 1 < len(sys.argv[1:]):
+            backup_path = sys.argv[i + 2]
+        elif not arg.startswith('--') and folder_path is None:
+            folder_path = arg
+
+    return folder_path, backup_path
 
 
 def main():
     """Точка входа программы"""
-    # Проверка аргументов командной строки
-    if len(sys.argv) != 2:
+    folder_path, backup_path = parse_args()
+
+    # Проверка наличия пути к папке
+    if folder_path is None:
         print_usage()
         sys.exit(1)
 
-    # Получение пути к папке
-    folder_path = sys.argv[1]
-
     # Проверка существования папки
     if not os.path.exists(folder_path):
-        print(f"Ошибка: Папка '{folder_path}' не существует")
+        print(f"❌ Ошибка: Папка '{folder_path}' не существует")
         sys.exit(1)
 
     if not os.path.isdir(folder_path):
-        print(f"Ошибка: '{folder_path}' не является папкой")
+        print(f"❌ Ошибка: '{folder_path}' не является папкой")
         sys.exit(1)
 
-    print(f"Сканирование папки: {folder_path}")
-    # Здесь будет основная логика
+    print(f"\n🔍 СКАНИРОВАНИЕ ПАПКИ: {folder_path}")
+    print("=" * 80)
+
+    # Сканирование папки
+    files_info, stats = scan_folder(folder_path)
+    print_files_info(files_info, stats)
+
+    print("\n" + "=" * 80)
+    print("✅ Сканирование завершено")
+    print("=" * 80)
 
 
 if __name__ == "__main__":
