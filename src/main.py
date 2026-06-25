@@ -3,6 +3,7 @@ import os
 
 from scanner import scan_folder, print_files_info
 from duplicates import find_duplicates, print_duplicates
+from backup import compare_folders, print_backup_comparison
 
 
 def print_usage():
@@ -15,6 +16,10 @@ def print_usage():
     print("\nПримеры:")
     print("  python main.py C:/Users/Егор/Documents")
     print("  python main.py C:/Users/Егор/Documents --backup D:/Backup")
+    print("\nЧто делает программа:")
+    print("  1. Сканирует папку и показывает метаданные файлов")
+    print("  2. Находит дубликаты файлов")
+    print("  3. Сравнивает с резервной копией (если указана)")
     print("=" * 80)
 
 
@@ -61,8 +66,18 @@ def main():
     duplicates = find_duplicates(files_info)
     print_duplicates(duplicates)
 
+    # 3. Сравнение с резервной копией
+    if backup_path:
+        if not os.path.exists(backup_path):
+            print(f"\n⚠️  Предупреждение: Папка бэкапа '{backup_path}' не существует")
+        elif not os.path.isdir(backup_path):
+            print(f"\n⚠️  Предупреждение: '{backup_path}' не является папкой")
+        else:
+            result = compare_folders(folder_path, backup_path)
+            print_backup_comparison(result)
+
     print("\n" + "=" * 80)
-    print("✅ Сканирование завершено")
+    print("✅ РАБОТА ЗАВЕРШЕНА УСПЕШНО")
     print("=" * 80)
 
 
